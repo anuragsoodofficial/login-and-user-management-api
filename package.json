@@ -1,0 +1,38 @@
+{
+  "name": "UserManagementAPI",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "server": "nodemon src/index.js"
+  },
+  "keywords": [],
+  "author": "Abhay Garhia",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "apollo-server-express": "^2.5.0",
+    "bcrypt": "^3.0.6",
+    "body-parser": "^1.19.0",
+    "concurrently": "^4.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.0.0",
+    "express": "^4.17.0",
+    "express-graphql": "^0.8.0",
+    "fs": "0.0.1-security",
+    "graphql": "^14.3.0",
+    "graphql-iso-date": "^3.6.1",
+    "graphql-tools": "^4.0.4",
+    "jsonwebtoken": "^8.5.1",
+    "merge-graphql-schemas": "^1.5.8",
+    "mongoose": "^5.5.10",
+    "nodemon": "^1.19.0",
+    "qs-middleware": "^1.0.3",
+    "validator": "^11.0.0"
+  },
+  "devDependencies": {
+    "@babel/node": "^7.4.5"
+  }
+}
