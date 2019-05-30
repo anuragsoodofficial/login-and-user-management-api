@@ -1,4 +1,5 @@
 const Employee = require('../../../schema/Employee.Schema');
+const Note = require('../../../schema/Note.Schema');
 const User = require('../../../schema/User.Schema');
 const bcrypt = require('bcrypt');
 
@@ -130,6 +131,61 @@ module.exports = {
                     reject(error);
                 }
             })
-        }
+        },
+
+        //Note operation
+        addNote: (root, req, args) => {
+            if (!args.isAuth && (args.role !== 'Admin')) {
+                throw new Error('You are not allowed to perform this action.')
+            }
+            return new Promise(async (resolve, reject) => {
+                        let noteTitle = req.noteTitle;
+                        let employeeId = req.employeeId;
+                        let forEmployeeId = req.forEmployeeId;
+                        let description = req.description;
+                        let createdOn = new Date().toISOString();
+                        let updatedOn = new Date().toISOString();
+                        const newNote = new Note({ noteTitle, employeeId, forEmployeeId, description, createdOn, updatedOn });
+                        newNote.save((err, res) => {
+                            err ? reject(err) : resolve(newNote);
+                        });
+                    });
+            },
+            updateNote: (root, req, args) => {
+            if (!args.isAuth && (args.role !== 'Admin')) {
+                throw new Error('You are not allowed to perform this action.')
+            }
+            return new Promise(async (resolve, reject) => {
+                try {
+                    let id = req.id;
+                    let noteTitle = req.noteTitle;
+                    let forEmployeeId = req.forEmployeeId;
+                    let description = req.description;
+                    let updatedOn = new Date().toISOString();
+                    const noteDetails = new Note({ noteTitle, forEmployeeId, description, updatedOn });
+                    await Note.findOneAndUpdate({ _id: id }, { $set: { noteTitle: noteTitle, forEmployeeId: forEmployeeId, description: description, updatedOn: updatedOn } }).exec((err, res) => {
+                    err ? reject(err) : resolve(noteDetails);
+                    });
+                }
+                catch (error) {
+                    reject(error)
+                }
+            });
+            },
+            deleteNote: (root, req, args) => {
+                if (!args.isAuth && (args.role !== 'Admin')) {
+                    throw new Error('You are not allowed to perform this action.')
+                }
+                return new Promise((resolve, reject) => {
+                    try {
+                        Note.findOneAndRemove({ _id: req.id }).exec((err, res) => {
+                            err ? reject(err) : resolve(res);
+                        });
+                    }
+                    catch (error) {
+                        reject(error);
+                    }
+                })
+            }
     }
 }

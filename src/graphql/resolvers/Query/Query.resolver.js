@@ -1,4 +1,5 @@
 const Employee = require('../../../schema/Employee.Schema');
+const Note = require('../../../schema/Note.Schema');
 const User = require('../../../schema/User.Schema');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -72,6 +73,50 @@ module.exports = {
                         err ? reject(err) : resolve(res);
                     });
             });
+        },
+        notes: (root, req, args) => {
+            if (!args.isAuth) {
+                throw new Error('User is not authenticated.')
+            }
+
+            return new Promise((resolve, reject) => {
+                Note.find({ forEmployeeId: req.forEmployeeId }).limit(req.limit).skip(req.page * req.limit).exec((err, res) => {
+                    err ? reject(err) : resolve(res);
+                });
+            })
+        },
+        notesByDateRange: (root, req, args) => {
+            if (!args.isAuth) {
+                throw new Error('User is not authenticated.')
+            }
+
+            return new Promise((resolve, reject) => {
+                Note.find({
+                    forEmployeeId: req.forEmployeeId,
+                    createdOn: {
+                        $gte: req.startDate,
+                        $lte: req.endDate
+                    }
+                }).limit(req.limit).skip(req.page * req.limit).exec((err, res) => {
+                    err ? reject(err) : resolve(res);
+                });  
+            })
+        },
+        notesByDate: (root, req, args) => {
+            if (!args.isAuth) {
+                throw new Error('User is not authenticated.')
+            }
+
+            return new Promise((resolve, reject) => {
+                Note.find({
+                    forEmployeeId: req.forEmployeeId,
+                    createdOn: {
+                        $lte: req.date
+                    }
+                }).limit(req.limit).skip(req.page * req.limit).exec((err, res) => {
+                    err ? reject(err) : resolve(res);
+                });  
+            })
         }
     }
 };

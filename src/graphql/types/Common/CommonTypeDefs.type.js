@@ -1,4 +1,5 @@
 const { gql } = require('apollo-server-express');
+const { GraphQLDateTime } = require('graphql-iso-date');
 
 const CommonTypeDefs = gql`
 input UserInput {
@@ -27,5 +28,15 @@ type Employee {
     levelId: String!
     phoneNumber: String!
   }
+
+type Note {
+    id: ID!
+    noteTitle: String!
+    employeeId: String!
+    forEmployeeId: String!
+    description: String!
+    createdOn: String!
+    updatedOn: String!
+}
 `;
 module.exports = CommonTypeDefs;
