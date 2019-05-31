@@ -26,6 +26,11 @@ module.exports = (req, res, next) => {
   }
   req.isAuth = true;
   req.userId = decodedToken.email;
-  req.role = decodedToken.role;
+  let role = decodedToken.role;
+  if (role.toUpperCase() === 'ADMIN')
+    req.isAdmin = true;
+  else
+    req.isAdmin = false;
+
   next();
 };

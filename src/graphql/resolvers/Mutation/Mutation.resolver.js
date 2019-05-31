@@ -8,37 +8,37 @@ module.exports = {
     Mutation: {
         // User Operations
         addUser: (root, req, args) => {
-            if (!args.isAuth && (args.role !== 'Admin')) {
-                throw new Error('You are not allowed to perform this action.')
-            }
-            else {
-                return new Promise(async (resolve, reject) => {
-                    try {
-                        let userDetails = await User.findOne({ 'email': req.email }, 'email password role');
-                        if (userDetails === null || userDetails['email'] !== req.email) {
-                            bcrypt.hash(req.password, 12, function (err, password) {
-                                let email = req.email;
-                                let role = req.role;
-                                const newUser = new User({ email, password, role });
-                                newUser.save((err, res) => {
-                                    err ? reject(err) : resolve(newUser);
-                                });
-                            });
-                        }
-                        else
-                            reject(new Error("User alreay exists!"));
-                    }
-                    catch (error) {
-                        reject(error);
-                    }
-                });
-            }
+            if (!args.isAuth)
+                throw new Error('You are not authenticated to perform this action.');
 
+            if (!args.isAdmin)
+                throw new Error('You are not authorized to perform this action.');
+
+            return new Promise(async (resolve, reject) => {
+                try {
+                    let userDetails = await User.findOne({ 'email': req.email }, 'email password role');
+                    if (userDetails === null || userDetails['email'] !== req.email) {
+                        bcrypt.hash(req.password, 12, function (err, password) {
+                            let email = req.email;
+                            let role = req.role;
+                            const newUser = new User({ email, password, role });
+                            newUser.save((err, res) => {
+                                err ? reject(err) : resolve(newUser);
+                            });
+                        });
+                    }
+                    else
+                        reject(new Error("User alreay exists!"));
+                }
+                catch (error) {
+                    reject(error);
+                }
+            });
         },
         updateUserRole: (root, req, args) => {
-            if (!args.isAuth && (args.role !== 'Admin')) {
-                throw new Error('You are not allowed to perform this action.')
-            }
+            if (!args.isAuth)
+                throw new Error('You are not authenticated to perform this action.');
+
             return new Promise(async (resolve, reject) => {
                 try {
                     let email = req.email;
@@ -54,9 +54,12 @@ module.exports = {
             });
         },
         deleteUser: (root, req, args) => {
-            if (!args.isAuth && (args.role !== 'Admin')) {
-                throw new Error('You are not allowed to perform this action.')
-            }
+            if (!args.isAuth)
+                throw new Error('You are not authenticated to perform this action.');
+
+            if (!args.isAdmin)
+                throw new Error('You are not authorized to perform this action.');
+
             return new Promise((resolve, reject) => {
                 User.findOneAndRemove(req).exec((err, res) => {
                     err ? reject(err) : resolve(res);
@@ -66,9 +69,12 @@ module.exports = {
 
         // Employee Operations
         addEmployee: (root, req, args) => {
-            if (!args.isAuth && (args.role !== 'Admin')) {
-                throw new Error('You are not allowed to perform this action.')
-            }
+            if (!args.isAuth)
+                throw new Error('You are not authenticated to perform this action.')
+
+            if (!args.isAdmin)
+                throw new Error('You are not authorized to perform this action.');
+
             return new Promise(async (resolve, reject) => {
                 try {
                     let email = req.email;
@@ -96,9 +102,12 @@ module.exports = {
             });
         },
         updateEmployee: (root, req, args) => {
-            if (!args.isAuth && (args.role !== 'Admin')) {
-                throw new Error('You are not allowed to perform this action.')
-            }
+            if (!args.isAuth)
+                throw new Error('You are not authenticated to perform this action.')
+
+            if (!args.isAdmin)
+                throw new Error('You are not authorized to perform this action.');
+
             return new Promise(async (resolve, reject) => {
                 try {
                     let employeeId = req.employeeId;
@@ -118,9 +127,12 @@ module.exports = {
             });
         },
         deleteEmployee: (root, req, args) => {
-            if (!args.isAuth && (args.role !== 'Admin')) {
-                throw new Error('You are not allowed to perform this action.')
-            }
+            if (!args.isAuth)
+                throw new Error('You are not authenticated to perform this action.')
+
+            if (!args.isAdmin)
+                throw new Error('You are not authorized to perform this action.');
+
             return new Promise((resolve, reject) => {
                 try {
                     Employee.findOneAndRemove({ employeeId: req.employeeId }).exec((err, res) => {
@@ -135,26 +147,26 @@ module.exports = {
 
         //Note operation
         addNote: (root, req, args) => {
-            if (!args.isAuth && (args.role !== 'Admin')) {
-                throw new Error('You are not allowed to perform this action.')
-            }
+            if (!args.isAuth) 
+                throw new Error('You are not authenticated to perform this action.');
+            
             return new Promise(async (resolve, reject) => {
-                        let noteTitle = req.noteTitle;
-                        let employeeId = req.employeeId;
-                        let forEmployeeId = req.forEmployeeId;
-                        let description = req.description;
-                        let createdOn = new Date().toISOString();
-                        let updatedOn = new Date().toISOString();
-                        const newNote = new Note({ noteTitle, employeeId, forEmployeeId, description, createdOn, updatedOn });
-                        newNote.save((err, res) => {
-                            err ? reject(err) : resolve(newNote);
-                        });
-                    });
-            },
-            updateNote: (root, req, args) => {
-            if (!args.isAuth && (args.role !== 'Admin')) {
-                throw new Error('You are not allowed to perform this action.')
-            }
+                let noteTitle = req.noteTitle;
+                let employeeId = req.employeeId;
+                let forEmployeeId = req.forEmployeeId;
+                let description = req.description;
+                let createdOn = new Date().toISOString();
+                let updatedOn = new Date().toISOString();
+                const newNote = new Note({ noteTitle, employeeId, forEmployeeId, description, createdOn, updatedOn });
+                newNote.save((err, res) => {
+                    err ? reject(err) : resolve(newNote);
+                });
+            });
+        },
+        updateNote: (root, req, args) => {
+            if (!args.isAuth) 
+                throw new Error('You are not authenticated to perform this action.');
+            
             return new Promise(async (resolve, reject) => {
                 try {
                     let id = req.id;
@@ -164,28 +176,28 @@ module.exports = {
                     let updatedOn = new Date().toISOString();
                     const noteDetails = new Note({ noteTitle, forEmployeeId, description, updatedOn });
                     await Note.findOneAndUpdate({ _id: id }, { $set: { noteTitle: noteTitle, forEmployeeId: forEmployeeId, description: description, updatedOn: updatedOn } }).exec((err, res) => {
-                    err ? reject(err) : resolve(noteDetails);
+                        err ? reject(err) : resolve(noteDetails);
                     });
                 }
                 catch (error) {
                     reject(error)
                 }
             });
-            },
-            deleteNote: (root, req, args) => {
-                if (!args.isAuth && (args.role !== 'Admin')) {
-                    throw new Error('You are not allowed to perform this action.')
+        },
+        deleteNote: (root, req, args) => {
+            if (!args.isAuth) 
+                throw new Error('You are not authenticated to perform this action.');
+            
+            return new Promise((resolve, reject) => {
+                try {
+                    Note.findOneAndRemove({ _id: req.id }).exec((err, res) => {
+                        err ? reject(err) : resolve(res);
+                    });
                 }
-                return new Promise((resolve, reject) => {
-                    try {
-                        Note.findOneAndRemove({ _id: req.id }).exec((err, res) => {
-                            err ? reject(err) : resolve(res);
-                        });
-                    }
-                    catch (error) {
-                        reject(error);
-                    }
-                })
-            }
+                catch (error) {
+                    reject(error);
+                }
+            })
+        }
     }
 }

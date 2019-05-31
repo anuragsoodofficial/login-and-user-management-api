@@ -9,9 +9,8 @@ const readSecretKey = () => fs.readFileSync(`jwt.secret.pk`, 'utf8')
 module.exports = {
     Query: {
         user: (root, req, args) => {
-            if (!args.isAuth) {
-                throw new Error('User is not authenticated.')
-            }
+            if (!args.isAuth)
+                throw new Error('You are not authenticated to perform this action.');
 
             return new Promise((resolve, reject) => {
                 User.findOne({ email: req.email }).exec((err, res) => {
@@ -20,9 +19,11 @@ module.exports = {
             });
         },
         users: (root, req, args) => {
-            if (!args.isAuth && (args.role !== 'Admin')) {
-                throw new Error('User is not authenticated.')
-            }
+            if (!args.isAuth)
+                throw new Error('You are not authenticated to perform this action.')
+
+            if (!args.isAdmin)
+                throw new Error('You are not authorized to perform this action.');
 
             return new Promise((resolve, reject) => {
                 User.find({})
@@ -34,13 +35,15 @@ module.exports = {
         },
         login: async (root, { email, password }) => {
             const user = await User.findOne({ email: email });
-            if (!user) {
+
+            if (!user)
                 throw new Error('User does not exist!');
-            }
+
             const isEqual = await bcrypt.compare(password, user.password);
-            if (!isEqual) {
+
+            if (!isEqual)
                 throw new Error('Password is incorrect!');
-            }
+
             const token = jwt.sign(
                 { email: user.email, role: user.role },
                 readSecretKey(),
@@ -51,9 +54,8 @@ module.exports = {
             return { email: email, token: token, tokenExpiration: 86400 };
         },
         employee: (root, req, args) => {
-            if (!args.isAuth) {
-                throw new Error('User is not authenticated.')
-            }
+            if (!args.isAuth)
+                throw new Error('You are not authenticated to perform this action.');
 
             return new Promise((resolve, reject) => {
                 Employee.findOne(req).exec((err, res) => {
@@ -62,9 +64,11 @@ module.exports = {
             })
         },
         employees: (root, req, args) => {
-            if (!args.isAuth) {
-                throw new Error('User is not authenticated.')
-            }
+            if (!args.isAuth)
+                throw new Error('You are not authenticated to perform this action.');
+
+            if (!args.isAdmin)
+                throw new Error('You are not authorized to perform this action.');
 
             return new Promise((resolve, reject) => {
                 Employee.find({})
@@ -75,9 +79,8 @@ module.exports = {
             });
         },
         notes: (root, req, args) => {
-            if (!args.isAuth) {
-                throw new Error('User is not authenticated.')
-            }
+            if (!args.isAuth)
+                throw new Error('You are not authenticated to perform this action.');
 
             return new Promise((resolve, reject) => {
                 Note.find({ forEmployeeId: req.forEmployeeId }).limit(req.limit).skip(req.page * req.limit).exec((err, res) => {
@@ -87,7 +90,7 @@ module.exports = {
         },
         notesByDateRange: (root, req, args) => {
             if (!args.isAuth) {
-                throw new Error('User is not authenticated.')
+                throw new Error('You are not authenticated to perform this action.')
             }
 
             return new Promise((resolve, reject) => {
@@ -99,13 +102,12 @@ module.exports = {
                     }
                 }).limit(req.limit).skip(req.page * req.limit).exec((err, res) => {
                     err ? reject(err) : resolve(res);
-                });  
+                });
             })
         },
         notesByDate: (root, req, args) => {
-            if (!args.isAuth) {
-                throw new Error('User is not authenticated.')
-            }
+            if (!args.isAuth)
+                throw new Error('You are not authenticated to perform this action.');
 
             return new Promise((resolve, reject) => {
                 Note.find({
@@ -115,7 +117,7 @@ module.exports = {
                     }
                 }).limit(req.limit).skip(req.page * req.limit).exec((err, res) => {
                     err ? reject(err) : resolve(res);
-                });  
+                });
             })
         }
     }
