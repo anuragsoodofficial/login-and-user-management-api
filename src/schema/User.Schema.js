@@ -44,6 +44,7 @@ const UserSchema = new Schema({
   employeeId: {
     type: String,
     required: true,
+    unique: true,
     validate: {
       validator: (employeeId) => {
         return /^([a-zA-Z0-9 ]{2,30})+$/.test(employeeId);
