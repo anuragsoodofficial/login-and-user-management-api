@@ -16,12 +16,14 @@ module.exports = {
 
             return new Promise(async (resolve, reject) => {
                 try {
-                    let userDetails = await User.findOne({ 'email': req.email }, 'email password role');
+                    let userDetails = await User.findOne({ 'email': req.email }, 'email password role name employeeId');
                     if (userDetails === null || userDetails['email'] !== req.email) {
                         bcrypt.hash(req.password, 12, function (err, password) {
                             let email = req.email;
                             let role = req.role;
-                            const newUser = new User({ email, password, role });
+                            let name = req.name;
+                            let employeeId = req.employeeId;
+                            const newUser = new User({ email, password, role, name, employeeId });
                             newUser.save((err, res) => {
                                 err ? reject(err) : resolve(newUser);
                             });
@@ -147,9 +149,9 @@ module.exports = {
 
         //Note operation
         addNote: (root, req, args) => {
-            if (!args.isAuth) 
+            if (!args.isAuth)
                 throw new Error('You are not authenticated to perform this action.');
-            
+
             return new Promise(async (resolve, reject) => {
                 let noteTitle = req.noteTitle;
                 let employeeId = req.employeeId;
@@ -164,9 +166,9 @@ module.exports = {
             });
         },
         updateNote: (root, req, args) => {
-            if (!args.isAuth) 
+            if (!args.isAuth)
                 throw new Error('You are not authenticated to perform this action.');
-            
+
             return new Promise(async (resolve, reject) => {
                 try {
                     let id = req.id;
@@ -185,9 +187,9 @@ module.exports = {
             });
         },
         deleteNote: (root, req, args) => {
-            if (!args.isAuth) 
+            if (!args.isAuth)
                 throw new Error('You are not authenticated to perform this action.');
-            
+
             return new Promise((resolve, reject) => {
                 try {
                     Note.findOneAndRemove({ _id: req.id }).exec((err, res) => {

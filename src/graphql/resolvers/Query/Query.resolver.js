@@ -13,9 +13,13 @@ module.exports = {
                 throw new Error('You are not authenticated to perform this action.');
 
             return new Promise((resolve, reject) => {
-                User.findOne({ email: req.email }).exec((err, res) => {
-                    err ? reject(err) : resolve(res);
-                });
+                if (req.employeeId || req.name) {
+                    User.findOne({ $or: [{ employeeId: req.employeeId }, { name: req.name }] }).exec((err, res) => {
+                        err ? reject(err) : resolve(res);
+                    });
+                }
+                else
+                    reject(new Error('Either employeeId or name is not mentioned. Please mention both to search for user details.'));
             });
         },
         users: (root, req, args) => {
@@ -45,7 +49,7 @@ module.exports = {
                 throw new Error('Password is incorrect!');
 
             const token = jwt.sign(
-                { email: user.email, role: user.role },
+                { email: user.email, role: user.role, employeeId: user.employeeId, name: user.name },
                 readSecretKey(),
                 {
                     expiresIn: '1d'
@@ -83,7 +87,7 @@ module.exports = {
                 throw new Error('You are not authenticated to perform this action.');
 
             return new Promise((resolve, reject) => {
-                Note.find({ forEmployeeId: req.forEmployeeId }).limit(req.limit).skip(req.page * req.limit).exec((err, res) => {
+                Note.find({ employeeId: args.employeeId, forEmployeeId: req.forEmployeeId }).limit(req.limit).skip(req.page * req.limit).exec((err, res) => {
                     err ? reject(err) : resolve(res);
                 });
             })
@@ -95,6 +99,7 @@ module.exports = {
 
             return new Promise((resolve, reject) => {
                 Note.find({
+                    employeeId: args.employeeId,
                     forEmployeeId: req.forEmployeeId,
                     createdOn: {
                         $gte: req.startDate,
@@ -111,6 +116,7 @@ module.exports = {
 
             return new Promise((resolve, reject) => {
                 Note.find({
+                    employeeId: args.employeeId,
                     forEmployeeId: req.forEmployeeId,
                     createdOn: {
                         $lte: req.date

@@ -8,9 +8,11 @@ input UserInput {
   }
 
 type User {
-  email: String!
-  password: String
-  role: String
+  email: String!,
+  password: String!,
+  role: String,
+  name: String!,
+  employeeId: String!
 }
 
 type AuthData {

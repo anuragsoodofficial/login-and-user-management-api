@@ -2,7 +2,7 @@ const { gql } = require('apollo-server-express');
 
 const QueryDef = gql`
 type Query {
-    user(email: String!): User
+    user(employeeId: String, name: String): User
     users: [User]
     login(email: String!, password: String!): AuthData!
     employee(employeeId: String!): Employee
