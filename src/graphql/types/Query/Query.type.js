@@ -10,6 +10,7 @@ type Query {
     notes(forEmployeeId: String!, limit: Int, page: Int): [Note]
     notesByDateRange(forEmployeeId: String!, startDate: String!, endDate: String!, limit: Int, page: Int): [Note]
     notesByDate(forEmployeeId: String!, date: String!, limit: Int, page: Int): [Note]
+    questionAndAnswers(orgRoleLevelId: String!): [PossibleAnswer]
   }
   `;
 
