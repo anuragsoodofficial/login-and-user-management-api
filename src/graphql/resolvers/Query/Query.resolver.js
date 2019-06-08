@@ -1,6 +1,7 @@
 const Employee = require('../../../schema/Employee.Schema');
 const Note = require('../../../schema/Note.Schema');
 const User = require('../../../schema/User.Schema');
+const PossibleAnswer = require('../../../schema/PossibleAnswers.Schema');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require("fs");
@@ -125,6 +126,16 @@ module.exports = {
                     err ? reject(err) : resolve(res);
                 });
             })
-        }
+        },
+        questionAndAnswers: (root, req, args) => {
+            if (!args.isAuth)
+                throw new Error('You are not authenticated to perform this action.');
+
+            return new Promise((resolve, reject) => {
+                PossibleAnswer.find({ orgRoleLevelId: req.orgRoleLevelId }).limit(req.limit).skip(req.page * req.limit).exec((err, res) => {
+                    err ? reject(err) : resolve(res);
+                });
+            })
+        },
     }
 };

@@ -19,7 +19,7 @@ type Mutation {
     addLevel(level: String!): Level
     deleteLevel(id: ID!): Level
 
-    addOrganisation(organisationId: Int!, organisationName: String!, office: [OfficeInput]!): Organisation
+    addOrganisation(organisationId: Int!, organisationName: String!): Organisation
     deleteOrganisation(id: ID!): Organisation
 
     addOrgRoleLevelId(organisationId: String!, roleId: String!, levelId: String!): OrgRoleLevelId

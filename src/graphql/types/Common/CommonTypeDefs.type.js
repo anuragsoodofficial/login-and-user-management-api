@@ -57,22 +57,10 @@ type Level {
   level: String!
 }
 
-type Office {
-  id: ID!
-  officeId: String!
-  officeLocation: String!
-}
-
-input OfficeInput {
-  officeId: String!
-  officeLocation: String!
-}
-
 type Organisation {
   id: ID!
   organisationId: Int!
   organisationName: String!
-  office: Office!
 }
 
 type OrgRoleLevelId {
@@ -86,8 +74,8 @@ type PossibleAnswer {
   id: ID!
   possibleAnswers: String!
   weightage: String!
-  associatedQuestion: Question!
-  orgRoleLevelId: OrgRoleLevelId!
+  associatedQuestion: [Question]!
+  orgRoleLevelId: [OrgRoleLevelId]!
 }
 
 type EmployeeResponse {
