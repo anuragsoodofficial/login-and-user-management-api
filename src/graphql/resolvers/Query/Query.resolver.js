@@ -133,7 +133,7 @@ module.exports = {
 
             return new Promise((resolve, reject) => {
                 PossibleAnswer.find({ orgRoleLevelId: req.orgRoleLevelId }).limit(req.limit).skip(req.page * req.limit).exec((err, res) => {
-                    err ? reject(err) : resolve(res);
+                    err ? reject(err) : resolve(resolve);
                 });
             })
         },
