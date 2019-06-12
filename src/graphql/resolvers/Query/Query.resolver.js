@@ -88,7 +88,7 @@ module.exports = {
                 throw new Error('You are not authenticated to perform this action.');
 
             return new Promise((resolve, reject) => {
-                Note.find({ employeeId: args.employeeId, forEmployeeId: req.forEmployeeId }).limit(req.limit).skip(req.page * req.limit).exec((err, res) => {
+                Note.find({ forEmployeeId: req.forEmployeeId }).limit(req.limit).skip(req.page * req.limit).exec((err, res) => {
                     err ? reject(err) : resolve(res);
                 });
             })
