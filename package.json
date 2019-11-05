@@ -24,7 +24,7 @@
     "graphql-tools": "^4.0.4",
     "jsonwebtoken": "^8.5.1",
     "merge-graphql-schemas": "^1.5.8",
-    "mongoose": "^5.5.10",
+    "mongoose": "^5.7.5",
     "nodemon": "^1.19.1",
     "qs-middleware": "^1.0.3",
     "validator": "^11.0.0"
